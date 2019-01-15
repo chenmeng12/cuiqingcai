@@ -22,9 +22,19 @@ def get_page(offset):
     except ConnectionError:
         return None
 
+def get_image(json):
+    if json.get('data'):
+        for item in json.get('data'):
+            if item.get('cell_type') is not None:
+                continue
+            title = item.get('title')
+            images = item.get('image_list')
+            for image in images:
+                yield {
+                    'image':image.get('url'),
+                    'title':title
+                }
 
 if __name__ == '__main__':
-    for item in get_page(0)['data']:
-        title = item.get('title')
-        for image in item['image_list']:
-            print(image['url'])
+    for i in get_image(get_page(0)):
+        print(i)
